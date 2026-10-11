@@ -38,26 +38,27 @@ public_users.get('/', function (req, res) {
 public_users.get('/isbn/:isbn',function (req, res) {
   //Write your code here
   const ISBN = req.params.isbn;
-  if (!ISBN) {
-    return res.status(404).json({message: "ERROR."});
-  }
-  return res.status(200).json(books[ISBN]);
+  Promise.resolve(req.params.isbn)
+    .then((isbn) => {
+        res.status(200).json(books[isbn]);
+    }).catch((error) => {
+        res.status(500).send(error);
+    })
 });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   //Write your code here
-  const author = req.params.author.replace(/-/g," ");
-  console.log(author);
-  if (!author) {
-    return res.status(404).json({message: "ERROR"});
-  }
-  Object.values(books).forEach( book => {
-    if (book.author === author) {
-        return res.status(200).json(book);
-    }
-  })
-  return res.status(404).json({message: "Book by author not found"});
+  Promise.resolve(req.params.author.replace(/-/g," "))
+    .then((author) => {
+        Object.values(books).forEach( book => {
+            if (book.author === author) {
+                res.status(200).json(book);
+            }
+          });
+    }).catch((error) => {
+        res.status(500).send(error);
+    })
 });
 
 // Get all books based on title
