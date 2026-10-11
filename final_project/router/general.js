@@ -24,11 +24,15 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  res.send(JSON.stringify(books));
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+public_users.get('/', function (req, res) {
+    Promise.resolve(books)
+      .then((bookList) => {
+        res.send(JSON.stringify(bookList));
+      })
+      .catch((error) => {
+        res.status(500).send(error);
+      });
+  });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
